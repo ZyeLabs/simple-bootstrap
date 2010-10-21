@@ -1,0 +1,6 @@
+A Simple bootstrap script
+- Creates a virtualenv
+- Installs packages from requirements.txt
+- Update - re-install packages/update
+- Remove - Remove the virual env
+- setup - create the virtual env
