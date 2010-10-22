@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-## WARNING: This file is generated
-#!/usr/bin/env python
 """Create a "virtual" Python installation
 """
 
@@ -1238,15 +1236,7 @@ def create_bootstrap_script(extra_text, python_version=''):
                + content)
     return content.replace('##EXT' 'END##', extra_text)
 
-import os
-pwd = os.path.dirname(__file__)
-
-def after_install(options, home_dir):
-    subprocess.call(["python",os.path.join(pwd,"pip.py"),"install",
-                     "-E",os.path.join(pwd, home_dir),
-                     "--enable-site-packages",
-                     "--requirement",os.path.join(pwd,"requirements.txt")])
-
+##EXTEND##
 
 ##file site.py
 SITE_PY = """

@@ -1,0 +1,1 @@
+-e git+http://github.com/zyelabs/python-foursquare.git#egg=foursquare

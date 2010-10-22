@@ -1,2 +1,2 @@
-main/
 pip-log.txt
+*.pyc
