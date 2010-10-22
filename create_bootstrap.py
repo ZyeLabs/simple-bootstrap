@@ -1,3 +1,4 @@
+#Create a bootstrap script
 import os
 import virtualenv
 
