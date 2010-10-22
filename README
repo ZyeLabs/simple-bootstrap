@@ -1,6 +1,12 @@
-A Simple bootstrap script
-- Creates a virtualenv
-- Installs packages from requirements.txt
-- Update - re-install packages/update
-- Remove - Remove the virual env
-- setup - create the virtual env
+Creates a virtualenv bootstrap script:
+Usage:
+python create_bootstrap.py
+
+The currently defined function just adds an after_install hook and pip installs from requirements.txt
+
+Test out the script:
+python bootstrap.py <virtualenvname>
+
+cd <virtualenvname>
+./bin/activate
+
