@@ -1238,6 +1238,7 @@ def create_bootstrap_script(extra_text, python_version=''):
                + content)
     return content.replace('##EXT' 'END##', extra_text)
 
+# Bootstrap functions file, gets included with virualenv bootstrap script
 import os
 pwd = os.path.dirname(__file__)
 

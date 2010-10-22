@@ -1,3 +1,4 @@
+# Bootstrap functions file, gets included with virualenv bootstrap script
 import os
 pwd = os.path.dirname(__file__)
 

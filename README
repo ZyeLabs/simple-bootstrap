@@ -7,6 +7,8 @@ The currently defined function just adds an after_install hook and pip installs 
 Test out the script:
 python bootstrap.py <virtualenvname>
 
+To customize, modify _bootstrap_functions.py
+
 cd <virtualenvname>
 ./bin/activate
 
