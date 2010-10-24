@@ -1238,16 +1238,45 @@ def create_bootstrap_script(extra_text, python_version=''):
                + content)
     return content.replace('##EXT' 'END##', extra_text)
 
-# Bootstrap functions file, gets included with virualenv bootstrap script
-import os
-pwd = os.path.dirname(__file__)
+
+import glob
+
+def get_ordered_files(path):
+    f = []
+    for ifile in glob.glob( os.path.join(path,"requirements", '*.txt') ):
+
+        if ifile.find("local")>-1:
+            f.append((0,ifile))
+        elif ifile.find("required")>-1:
+            f.append((1,ifile))
+        elif ifile.find("optional")>-1:
+            f.append((3,ifile))
+        else:
+            f.append((2,ifile))
+    f.sort()
+    return f
 
 def after_install(options, home_dir):
-    subprocess.call(["python",os.path.join(pwd,"pip.py"),"install",
+    print "Installing Requirements".ljust(50,'.')
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    if sys.platform == 'win32':
+        bin = "Scripts"
+        cmd_list = [os.path.join(home_dir,bin,"pip"), "install",
                      "-E",os.path.join(pwd, home_dir),
                      "--enable-site-packages",
-                     "--requirement",os.path.join(pwd,"requirements.txt")])
-
+                     "--requirement"]
+    else:
+        bin = "bin"
+        cmd_list = ["python",os.path.join(pwd,"pip.py"), "install",
+                     "-E",os.path.join(pwd, home_dir),
+                     "--enable-site-packages",
+                     "--requirement"]
+    files = get_ordered_files(pwd)
+    subprocess.call(["python", os.path.join(home_dir,bin,"activate_this.py")])
+    for f in files:
+        cmd_list.append(f[1])
+        subprocess.call(cmd_list)
+    print "Done"  
 
 ##file site.py
 SITE_PY = """
