@@ -1240,6 +1240,7 @@ def create_bootstrap_script(extra_text, python_version=''):
 
 
 import glob
+pwd = os.path.dirname(os.path.abspath(__file__))
 
 def get_ordered_files(path):
     f = []
@@ -1257,8 +1258,6 @@ def get_ordered_files(path):
     return f
 
 def after_install(options, home_dir):
-    print "Installing Requirements".ljust(50,'.')
-    pwd = os.path.dirname(os.path.abspath(__file__))
     if sys.platform == 'win32':
         bin = "Scripts"
         cmd_list = [os.path.join(home_dir,bin,"pip"), "install",
@@ -1271,9 +1270,32 @@ def after_install(options, home_dir):
                      "-E",os.path.join(pwd, home_dir),
                      "--enable-site-packages",
                      "--requirement"]
+        try:
+            import pip
+            try:
+                print "Found pip, moving along".ljust(50,'.')
+                f = open('pip.py', 'r')
+            except:
+                print "Found pip, moving along".ljust(50,'.')
+                cmd_list = ["pip", "install",
+                     "-E",os.path.join(pwd, home_dir),
+                     "--enable-site-packages",
+                     "--requirement"]
+        except:
+            print "Downloading pip".ljust(50,'.')
+            import urllib2
+            fileurl = "http://github.com/downloads/zyelabs/simple-bootstrap/pip.py"
+            tofile = os.path.join(pwd,"pip.py")
+            u = urllib2.urlopen(fileurl)
+            localFile = open(tofile, 'w')
+            localFile.write(u.read())
+            localFile.close()
+    print "Installing Requirements".ljust(50,'.')
     files = get_ordered_files(pwd)
     subprocess.call(["python", os.path.join(home_dir,bin,"activate_this.py")])
     for f in files:
+        print "Requirements file ", f[1]
+        print ''.ljust(50,'.')
         cmd_list.append(f[1])
         subprocess.call(cmd_list)
     print "Done"  

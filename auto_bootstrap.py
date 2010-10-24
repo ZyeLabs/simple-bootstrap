@@ -5,6 +5,25 @@ VENV_URL    = "http://github.com/downloads/zyelabs/simple-bootstrap/virtualenv.p
 
 
 def setup(project = "TESTING"):
+    '''
+    Automatically generates a bootstrap script, and then runs it.
+    
+    Usage:
+        python auto_bootstrap.py <virtualenvironment_name>
+    
+    The auto generated bootstrap scriptuses pip to install all requirements found in requirements/*.txt
+    Example: 
+        requirements/local_apps.txt
+        requirements/remote_required.txt
+        requirements/optional_libs.txt
+    
+    Requirements files are processed in the following order:
+        1. any .txt file with "local" in the name
+        2. any .txt file with "required" in the name
+        3. any other .txt files
+        4. any .txt file with "optional" in the name
+     
+    '''
     try:
         import virtualenv
     except:
@@ -15,10 +34,11 @@ def setup(project = "TESTING"):
         import virtualenv
         
     
-    print 'Creating Bootstrap'.ljust(50,'.'),
-    #extra_text = open(os.path.join(ROOT,'bootstrap_addon.py')).read()
+    print 'Creating Bootstrap Script'.ljust(50,'.'),
+
     extra_text = textwrap.dedent('''
     import glob
+    pwd = os.path.dirname(os.path.abspath(__file__))
     
     def get_ordered_files(path):
         f = []
@@ -36,8 +56,6 @@ def setup(project = "TESTING"):
         return f
         
     def after_install(options, home_dir):
-        print "Installing Requirements".ljust(50,'.')
-        pwd = os.path.dirname(os.path.abspath(__file__))
         if sys.platform == 'win32':
             bin = "Scripts"
             cmd_list = [os.path.join(home_dir,bin,"pip"), "install",
@@ -50,21 +68,42 @@ def setup(project = "TESTING"):
                          "-E",os.path.join(pwd, home_dir),
                          "--enable-site-packages",
                          "--requirement"]
+            try:
+                import pip
+                try:
+                    print "Found pip, moving along".ljust(50,'.')
+                    f = open('pip.py', 'r')
+                except:
+                    print "Found pip, moving along".ljust(50,'.')
+                    cmd_list = ["pip", "install",
+                         "-E",os.path.join(pwd, home_dir),
+                         "--enable-site-packages",
+                         "--requirement"]
+            except:
+                print "Downloading pip".ljust(50,'.')
+                import urllib2
+                fileurl = "http://github.com/downloads/zyelabs/simple-bootstrap/pip.py"
+                tofile = os.path.join(pwd,"pip.py")
+                u = urllib2.urlopen(fileurl)
+                localFile = open(tofile, 'w')
+                localFile.write(u.read())
+                localFile.close()
+        print "Installing Requirements".ljust(50,'.')
         files = get_ordered_files(pwd)
         subprocess.call(["python", os.path.join(home_dir,bin,"activate_this.py")])
         for f in files:
-            print "Installing from", f[1], ''.ljust(50,'.')
+            print "Requirements file ", f[1]
+            print ''.ljust(50,'.')
             cmd_list.append(f[1])
             subprocess.call(cmd_list)
         print "Done"  ''')
     bootstrap_text = virtualenv.create_bootstrap_script(extra_text)
     f = open('bootstrap.py', 'w').write(bootstrap_text)
     print 'Done\n'
-    print 'Executing Bootstrap'.ljust(50,'.')
+    print 'Executing Bootstrap Script'.ljust(50,'.')
     
     subprocess.call(["python", "bootstrap.py",project ])
-    print 'Done\n'
-    
+    print '\n'
     print 'Environment Has been setup'.ljust(50,".")
 
     
@@ -80,5 +119,3 @@ if __name__ == '__main__':
         print 'Please specify destination folder name as first argument'
     else:
         setup(str(sys.argv[1]))
-
-

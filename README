@@ -1,14 +1,36 @@
-Creates a virtualenv bootstrap script:
-Usage:
-python create_bootstrap.py
+Simple BootStrap
 
-The currently defined function just adds an after_install hook and pip installs from requirements.txt
+Utilities for adding really simple bootstrap scripts to your project.
 
-Test out the script:
-python bootstrap.py <virtualenvname>
+create_boostrap.py
+    Usage:
+    python create_bootstrap.py <bootstrapfile_name> <include_file>
+    
+    The generated bootstrap script will be created with the <function_file> included, just copy it to your project root folder.
+    
+    see include/_simple_pip.py for an example
 
-To customize, modify _bootstrap_functions.py
+auto_bootstrap.py
+Automatically generates a bootstrap script, and then runs it.
+    
+    Usage:
+        python auto_bootstrap.py <virtualenvironment_name>
+    
+    The auto generated bootstrap scriptuses pip to install all requirements found in requirements/*.txt
+    Example: 
+        requirements/local_apps.txt
+        requirements/remote_required.txt
+        requirements/optional_libs.txt
+    
+    Requirements files are processed in the following order:
+        1. any .txt file with "local" in the name
+        2. any .txt file with "required" in the name
+        3. any other .txt files
+        4. any .txt file with "optional" in the name
 
-cd <virtualenvname>
-./bin/activate
+includes/_simple_pip.py
+    Used by create_bootstrap.py
+    include file, included in the bootstrap.py
+    Install packages using pip, checks "requirements/" dir for .txt files and installs all packages listed in the .txt
 
+- Only include either auto_bootstrap or the generated bootstrap in your project
