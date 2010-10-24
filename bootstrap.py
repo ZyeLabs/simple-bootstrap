@@ -1238,7 +1238,12 @@ def create_bootstrap_script(extra_text, python_version=''):
                + content)
     return content.replace('##EXT' 'END##', extra_text)
 
-
+'''
+Bootstrap include script created with simple-bootstrap & virtualenv
+- This scripts sets up a virtualenv
+- Install packages using pip, checks "requirements/" dir for .txt files and installs all packages listed in the .txt
+- http://github.com/zyelabs/simple-bootstrap
+'''
 import glob
 pwd = os.path.dirname(os.path.abspath(__file__))
 
@@ -1261,15 +1266,15 @@ def after_install(options, home_dir):
     if sys.platform == 'win32':
         bin = "Scripts"
         cmd_list = [os.path.join(home_dir,bin,"pip"), "install",
-                     "-E",os.path.join(pwd, home_dir),
-                     "--enable-site-packages",
-                     "--requirement"]
+                 "-E",os.path.join(pwd, home_dir),
+                 "--enable-site-packages",
+                 "--requirement"]
     else:
         bin = "bin"
         cmd_list = ["python",os.path.join(pwd,"pip.py"), "install",
-                     "-E",os.path.join(pwd, home_dir),
-                     "--enable-site-packages",
-                     "--requirement"]
+                 "-E",os.path.join(pwd, home_dir),
+                 "--enable-site-packages",
+                 "--requirement"]
         try:
             import pip
             try:
@@ -1278,9 +1283,9 @@ def after_install(options, home_dir):
             except:
                 print "Found pip, moving along".ljust(50,'.')
                 cmd_list = ["pip", "install",
-                     "-E",os.path.join(pwd, home_dir),
-                     "--enable-site-packages",
-                     "--requirement"]
+                 "-E",os.path.join(pwd, home_dir),
+                 "--enable-site-packages",
+                 "--requirement"]
         except:
             print "Downloading pip".ljust(50,'.')
             import urllib2
@@ -1298,7 +1303,7 @@ def after_install(options, home_dir):
         print ''.ljust(50,'.')
         cmd_list.append(f[1])
         subprocess.call(cmd_list)
-    print "Done"  
+    print "Done"
 
 ##file site.py
 SITE_PY = """
