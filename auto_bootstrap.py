@@ -37,13 +37,20 @@ def setup(project = "TESTING"):
     print 'Creating Bootstrap Script'.ljust(50,'.'),
 
     extra_text = textwrap.dedent('''
+
+    """
+    Bootstrap include script created with simple-bootstrap & virtualenv
+    - This scripts sets up a virtualenv
+    - Install packages using pip, checks "requirements/" dir for .txt files and installs all packages listed in the .txt
+    - http://github.com/zyelabs/simple-bootstrap
+    """
     import glob
-    pwd = os.path.dirname(os.path.abspath(__file__))
-    
+
+
     def get_ordered_files(path):
         f = []
         for ifile in glob.glob( os.path.join(path,"requirements", '*.txt') ):
-        
+
             if ifile.find("local")>-1:
                 f.append((0,ifile))
             elif ifile.find("required")>-1:
@@ -54,31 +61,33 @@ def setup(project = "TESTING"):
                 f.append((2,ifile))
         f.sort()
         return f
-        
+
     def after_install(options, home_dir):
+        pwd = os.path.dirname(os.path.abspath(__file__))
         if sys.platform == 'win32':
             bin = "Scripts"
             cmd_list = [os.path.join(home_dir,bin,"pip"), "install",
-                         "-E",os.path.join(pwd, home_dir),
-                         "--enable-site-packages",
-                         "--requirement"]
+                     "-E",os.path.join(pwd, home_dir),
+                     "--enable-site-packages",
+                     "--requirement"]
         else:
             bin = "bin"
             cmd_list = ["python",os.path.join(pwd,"pip.py"), "install",
-                         "-E",os.path.join(pwd, home_dir),
-                         "--enable-site-packages",
-                         "--requirement"]
+                     "-E",os.path.join(pwd, home_dir),
+                     "--enable-site-packages",
+                     "--requirement"]
             try:
                 import pip
                 try:
                     print "Found pip, moving along".ljust(50,'.')
                     f = open('pip.py', 'r')
                 except:
+                    print os.path.join(pwd, home_dir)
                     print "Found pip, moving along".ljust(50,'.')
                     cmd_list = ["pip", "install",
-                         "-E",os.path.join(pwd, home_dir),
-                         "--enable-site-packages",
-                         "--requirement"]
+                     "-E",os.path.join(pwd, home_dir),
+                     "--enable-site-packages",
+                     "--requirement"]
             except:
                 print "Downloading pip".ljust(50,'.')
                 import urllib2
@@ -94,8 +103,8 @@ def setup(project = "TESTING"):
         for f in files:
             print "Requirements file ", f[1]
             print ''.ljust(50,'.')
-            cmd_list.append(f[1])
-            subprocess.call(cmd_list)
+            file_cmd = cmd_list + [f[1]]
+            subprocess.call(file_cmd)
         print "Done"  ''')
     bootstrap_text = virtualenv.create_bootstrap_script(extra_text)
     f = open('bootstrap.py', 'w').write(bootstrap_text)
